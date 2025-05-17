@@ -1,93 +1,65 @@
 # Laporan Proyek Sistem Rekomendasi
 
 ## Project Overview
-
-Sistem rekomendasi telah menjadi komponen penting dalam platform streaming seperti Netflix, di mana pengguna dihadapkan pada ribuan pilihan konten setiap hari. Dengan jumlah konten yang terus bertambah, pengguna sering kali kesulitan menemukan film atau acara TV yang sesuai dengan preferensi mereka. Oleh karena itu, sistem rekomendasi yang efektif diperlukan untuk meningkatkan pengalaman pengguna, memperpanjang waktu retensi, dan mendorong kepuasan pelanggan. Proyek ini bertujuan untuk membangun sistem rekomendasi berbasis **Content-Based Filtering** menggunakan dataset `netflix_titles.csv`, yang berisi informasi tentang film dan acara TV di Netflix, seperti judul, deskripsi, genre, dan lainnya.
+Sistem rekomendasi merupakan elemen kunci dalam platform streaming seperti Netflix, yang menghadapi tantangan menyajikan ribuan konten kepada pengguna setiap hari. Dengan banyaknya pilihan, pengguna sering kali kesulitan menemukan film atau acara TV yang sesuai dengan minat mereka. Proyek ini bertujuan untuk membangun sistem rekomendasi berbasis **Content-Based Filtering** menggunakan dataset `netflix_titles.csv`, yang berisi informasi seperti judul, deskripsi, dan genre konten di Netflix.
 
 **Mengapa Masalah Ini Penting?**  
-Masalah ini perlu diselesaikan karena rekomendasi yang relevan dapat meningkatkan engagement pengguna, mengurangi churn rate, dan membantu Netflix memaksimalkan nilai pelanggan. Tanpa sistem rekomendasi, pengguna mungkin merasa kewalahan oleh banyaknya pilihan, yang dapat mengurangi kepuasan mereka. Pendekatan Content-Based Filtering dipilih karena memungkinkan rekomendasi berdasarkan kesamaan konten (misalnya, deskripsi dan genre), yang cocok untuk dataset dengan informasi teks yang kaya seperti `netflix_titles.csv`.
+Sistem rekomendasi yang relevan meningkatkan pengalaman pengguna, memperpanjang waktu retensi, dan mengurangi churn rate. Pendekatan Content-Based Filtering dipilih karena memanfaatkan fitur konten seperti deskripsi dan genre, yang cocok untuk dataset teks seperti `netflix_titles.csv`, dan lebih tahan terhadap masalah *cold start* dibandingkan pendekatan kolaboratif.
 
 **Referensi**  
-Menurut penelitian, sistem rekomendasi berbasis konten efektif untuk memberikan rekomendasi yang dipersonalisasi dengan memanfaatkan fitur item seperti deskripsi atau genre (Ricci et al., 2011). Selain itu, pendekatan ini lebih tahan terhadap masalah *cold start* dibandingkan pendekatan kolaboratif, karena tidak memerlukan data interaksi pengguna (Lops et al., 2011). Dataset seperti `netflix_titles.csv` sering digunakan dalam penelitian untuk mengembangkan sistem rekomendasi berbasis teks (Kaggle, 2021).
-
-**Referensi Sitasi**  
 - Kaggle. (2021). *Netflix Movies and TV Shows Dataset*. Diakses dari https://www.kaggle.com/datasets/shivamb/netflix-shows  
 - Lops, P., de Gemmis, M., & Semeraro, G. (2011). Content-based recommender systems: State of the art and trends. In *Recommender Systems Handbook* (pp. 73-105). Springer.  
 - Ricci, F., Rokach, L., & Shapira, B. (2011). Introduction to recommender systems handbook. In *Recommender Systems Handbook* (pp. 1-35). Springer.
 
 ## Business Understanding
 
-Bagian ini menjelaskan proses klarifikasi masalah dan tujuan proyek untuk memenuhi kebutuhan bisnis Netflix dalam memberikan rekomendasi konten yang relevan.
-
 ### Problem Statements
-1. **Kesulitan Pengguna dalam Menemukan Konten Relevan**: Dengan ribuan film dan acara TV, pengguna sulit menemukan konten yang sesuai dengan minat mereka tanpa rekomendasi yang dipersonalisasi.  
-2. **Kurangnya Personalisasi Berdasarkan Konten**: Tanpa analisis teks seperti deskripsi dan genre, rekomendasi mungkin tidak mencerminkan preferensi pengguna berdasarkan tema atau jenis konten.
+1. **Kesulitan Pengguna dalam Menemukan Konten Relevan**: Ribuan konten membuat pengguna sulit menemukan film/acara TV yang sesuai tanpa rekomendasi yang dipersonalisasi.  
+2. **Kurangnya Personalisasi Berdasarkan Konten**: Tanpa analisis teks seperti deskripsi dan genre, rekomendasi mungkin tidak mencerminkan preferensi pengguna.
 
 ### Goals
-1. **Membangun Sistem Rekomendasi Berbasis Konten**: Mengembangkan sistem Content-Based Filtering yang merekomendasikan konten serupa berdasarkan deskripsi dan genre, sehingga membantu pengguna menemukan film/acara TV yang relevan.  
-2. **Meningkatkan Relevansi Rekomendasi**: Memastikan rekomendasi sesuai dengan tema dan genre konten yang disukai pengguna, dengan memanfaatkan fitur teks seperti `description` dan `listed_in`.
+1. **Membangun Sistem Rekomendasi Berbasis Konten**: Mengembangkan sistem Content-Based Filtering untuk merekomendasikan konten serupa berdasarkan deskripsi dan genre.  
+2. **Meningkatkan Relevansi Rekomendasi**: Memastikan rekomendasi sesuai dengan tema dan genre yang disukai pengguna.
 
 ### Solution Approach
-Untuk mencapai tujuan di atas, dua pendekatan Content-Based Filtering diusulkan:  
-1. **Pendekatan 1: Menggunakan Kombinasi Deskripsi dan Genre**  
-   - Menggabungkan kolom `description` dan `listed_in` untuk menciptakan fitur teks yang lebih kaya.  
-   - Menggunakan **TF-IDF Vectorizer** untuk mengubah teks menjadi vektor numerik dan **cosine similarity** untuk mengukur kesamaan antar konten.  
-   - Alasan: Kombinasi fitur meningkatkan konteks rekomendasi dengan mempertimbangkan tema (deskripsi) dan kategori (genre).  
+1. **Pendekatan 1: Kombinasi Deskripsi dan Genre**  
+   - Menggabungkan kolom `description` dan `listed_in` untuk fitur teks yang lebih kaya.  
+   - Menggunakan **TF-IDF Vectorizer** dan **cosine similarity** untuk menghitung kesamaan antar konten.  
+   - Alasan: Kombinasi fitur meningkatkan konteks rekomendasi dengan mempertimbangkan tema dan kategori.  
 
-2. **Pendekatan 2: Menggunakan Deskripsi Saja**  
-   - Hanya menggunakan kolom `description` sebagai fitur untuk rekomendasi.  
-   - Menggunakan **TF-IDF Vectorizer** dan **cosine similarity** seperti pendekatan pertama.  
-   - Alasan: Fokus pada deskripsi dapat menangkap nuansa cerita, tetapi mungkin kehilangan informasi genre.
+2. **Pendekatan 2: Deskripsi Saja**  
+   - Hanya menggunakan kolom `description` sebagai fitur.  
+   - Menggunakan **TF-IDF Vectorizer** dan **cosine similarity**.  
+   - Alasan: Fokus pada deskripsi menangkap nuansa cerita, tetapi mungkin kurang spesifik pada genre.
 
 ## Data Understanding
-
-Dataset yang digunakan adalah `netflix_titles.csv`, tersedia di Kaggle (https://www.kaggle.com/datasets/shivamb/netflix-shows). Dataset ini berisi **8807 baris** dan **12 kolom**, dengan informasi tentang film dan acara TV di Netflix. Data memiliki beberapa missing values, tetapi kolom utama untuk rekomendasi (`description` dan `listed_in`) lengkap tanpa missing values. Tidak ada duplikat dalam dataset (diperiksa dengan `df.duplicated().sum()`).
+Dataset `netflix_titles.csv` berisi **8807 baris** dan **12 kolom**, dengan informasi tentang film dan acara TV di Netflix. Kolom utama untuk rekomendasi (`description` dan `listed_in`) tidak memiliki missing values, dan tidak ada duplikat dalam dataset.
 
 **Variabel dalam Dataset**:
-- `show_id`: ID unik untuk setiap konten (string).  
-- `type`: Jenis konten (Movie atau TV Show).  
+- `show_id`: ID unik (string).  
+- `type`: Jenis konten (Movie/TV Show).  
 - `title`: Judul konten (string).  
 - `director`: Nama sutradara (string, 2634 missing values).  
 - `cast`: Daftar aktor (string, 825 missing values).  
 - `country`: Negara produksi (string, 831 missing values).  
-- `date_added`: Tanggal ditambahkan ke Netflix (string, 10 missing values).  
+- `date_added`: Tanggal ditambahkan (string, 10 missing values).  
 - `release_year`: Tahun rilis (integer).  
 - `rating`: Rating usia (string, 4 missing values).  
-- `duration`: Durasi konten (string, 3 missing values).  
+- `duration`: Durasi (string, 3 missing values).  
 - `listed_in`: Daftar genre (string).  
 - `description`: Deskripsi konten (string).
 
 **Exploratory Data Analysis (EDA)**:  
-- **Visualisasi Distribusi Genre**: Bar chart menunjukkan genre teratas seperti "Dramas, International Movies" dan "Documentaries" mendominasi dataset.  
-  ```python
-  plt.figure(figsize=(12, 6))
-  df['listed_in'].value_counts().head(10).plot(kind='bar')
-  plt.title('Top 10 Genres in Netflix Dataset')
-  plt.xlabel('Genre')
-  plt.ylabel('Count')
-  plt.xticks(rotation=45)
-  plt.show()
-  ```
-  **Insight**: Genre populer mencerminkan preferensi global, yang dapat membantu rekomendasi berbasis genre.  
-
-- **Word Cloud untuk Deskripsi**: Visualisasi kata-kata umum dalam kolom `description` menunjukkan istilah seperti "life", "love", dan "world" sering muncul.  
-  ```python
-  text = ' '.join(df['description'].dropna())
-  wordcloud = WordCloud(width=800, height=400, background_color='white').generate(text)
-  plt.figure(figsize=(10, 5))
-  plt.imshow(wordcloud, interpolation='bilinear')
-  plt.axis('off')
-  plt.title('Word Cloud of Netflix Descriptions')
-  plt.show()
-  ```
-  **Insight**: Kata-kata umum menunjukkan tema emosional dan petualangan, yang penting untuk rekomendasi berbasis teks.
+- **Distribusi Genre**: Bar chart menunjukkan genre seperti "Dramas, International Movies" dan "Documentaries" mendominasi.  
+  **Insight**: Genre populer mencerminkan preferensi global, relevan untuk rekomendasi berbasis genre.  
+- **Word Cloud Deskripsi**: Kata-kata seperti "life", "love", dan "world" sering muncul.  
+  **Insight**: Tema emosional dan petualangan penting untuk rekomendasi berbasis teks.
 
 ## Data Preparation
-
-Data preparation dilakukan untuk memastikan dataset bersih dan siap untuk pemodelan. Berikut adalah langkah-langkah yang dilakukan, beserta alasan dan kode terkait:
+Data preparation dilakukan untuk memastikan dataset bersih dan siap untuk pemodelan. Berikut adalah tahapan yang dilakukan secara urut, sesuai dengan notebook:
 
 1. **Penanganan Missing Values**  
-   - **Proses**: Mengisi missing values pada kolom `director` (2634), `cast` (825), `country` (831), `date_added` (10), `rating` (4), dan `duration` (3) dengan placeholder `"Unknown"`.  
+   - **Proses**: Mengisi missing values pada kolom `director`, `cast`, `country`, `date_added`, `rating`, dan `duration` dengan `"Unknown"`.  
      ```python
      df['director'] = df['director'].fillna('Unknown')
      df['cast'] = df['cast'].fillna('Unknown')
@@ -96,17 +68,17 @@ Data preparation dilakukan untuk memastikan dataset bersih dan siap untuk pemode
      df['rating'] = df['rating'].fillna('Unknown')
      df['duration'] = df['duration'].fillna('Unknown')
      ```
-   - **Alasan**: Kolom ini tidak digunakan dalam pemodelan utama (hanya `description` dan `listed_in`), tetapi mengisi missing values mencegah error dan menjaga integritas dataset untuk analisis tambahan. Menghapus baris tidak dilakukan karena akan mengurangi data yang berharga (hingga 30% untuk `director`).
+   - **Alasan**: Kolom ini tidak digunakan dalam pemodelan utama, tetapi mengisi missing values mencegah error dan menjaga integritas dataset.
 
 2. **Penggabungan Fitur**  
-   - **Proses**: Menggabungkan kolom `description` dan `listed_in` menjadi kolom baru `combined_features`.  
+   - **Proses**: Menggabungkan kolom `description` dan `listed_in` menjadi `combined_features`.  
      ```python
      df['combined_features'] = df['description'] + ' ' + df['listed_in']
      ```
-   - **Alasan**: Kombinasi ini menciptakan fitur teks yang lebih kaya, menggabungkan narasi cerita (deskripsi) dan kategori (genre) untuk rekomendasi yang lebih akurat.
+   - **Alasan**: Kombinasi ini menciptakan fitur teks yang lebih kaya untuk rekomendasi yang lebih akurat.
 
 3. **Preprocessing Teks**  
-   - **Proses**: Mengubah teks ke huruf kecil, menghapus tanda baca, dan menghilangkan stop words (kata umum seperti "the", "is").  
+   - **Proses**: Mengubah teks ke huruf kecil, menghapus tanda baca, dan menghilangkan stop words.  
      ```python
      def preprocess_text(text):
          text = text.lower()
@@ -115,93 +87,121 @@ Data preparation dilakukan untuk memastikan dataset bersih dan siap untuk pemode
          return text
      df['combined_features'] = df['combined_features'].apply(preprocess_text)
      ```
-   - **Alasan**: Preprocessing teks mengurangi noise, memastikan hanya kata-kata bermakna yang digunakan dalam pemodelan, dan meningkatkan efisiensi TF-IDF Vectorizer.
+   - **Alasan**: Preprocessing mengurangi noise dan memastikan hanya kata-kata bermakna yang digunakan.
 
-**Mengapa Data Preparation Diperlukan?**  
-- Missing values dapat menyebabkan error selama pemrosesan data.  
-- Penggabungan fitur meningkatkan konteks untuk rekomendasi.  
-- Preprocessing teks memastikan data konsisten dan relevan, mengurangi dimensi fitur yang tidak perlu.
-
-## Modeling
-
-Sistem rekomendasi dibangun menggunakan **Content-Based Filtering** dengan dua pendekatan, seperti dijelaskan dalam **Solution Approach**. Berikut adalah detailnya:
-
-1. **Pendekatan 1: Kombinasi Deskripsi dan Genre**  
-   - **Proses**:  
-     - Menggunakan **TF-IDF Vectorizer** untuk mengubah `combined_features` menjadi vektor numerik. Parameter `max_features=5000` digunakan untuk efisiensi.  
-       ```python
-       tfidf = TfidfVectorizer(max_features=5000, stop_words='english')
-       tfidf_matrix = tfidf.fit_transform(df['combined_features'])
-       ```
-     - Menghitung **cosine similarity** untuk mengukur kesamaan antar konten.  
-       ```python
-       cosine_sim = cosine_similarity(tfidf_matrix, tfidf_matrix)
-       ```
-     - Membuat fungsi rekomendasi yang mengembalikan 10 konten serupa berdasarkan judul input.  
-       ```python
-       def get_recommendations(title, cosine_sim=cosine_sim, df=df):
-           idx = df[df['title'] == title].index[0]
-           sim_scores = list(enumerate(cosine_sim[idx]))
-           sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
-           sim_scores = sim_scores[1:11]
-           movie_indices = [i[0] for i in sim_scores]
-           return df[['title', 'listed_in', 'description']].iloc[movie_indices]
-       ```
-   - **Output**: Top-10 rekomendasi untuk judul seperti "Squid Game" dan "Stranger Things". Contoh untuk "Squid Game":  
-     ```bash
-      Recommendations for 'Squid Game':
-                                        title  \
-      1011                       Free to Play   
-      3684                          Kakegurui   
-      2827                  The Circle Brazil   
-      1564                       Futmalls.com   
-      3037                     Medical Police   
-      3886                       Señora Acero   
-      1562                Alice in Borderland   
-      69       Stories by Rabindranath Tagore   
-      5411  Zipi & Zape y la Isla del Capitan   
-      1044                 High-Rise Invasion
-    ```
-
-2. **Pendekatan 2: Deskripsi Saja**  
-   - **Proses**: Sama seperti pendekatan pertama, tetapi hanya menggunakan kolom `description`.  
+4. **Ekstraksi Fitur dengan TF-IDF**  
+   - **Proses**: Mengubah teks dalam `combined_features` (Pendekatan 1) dan `description` (Pendekatan 2) menjadi vektor numerik menggunakan **TF-IDF Vectorizer**.  
      ```python
+     # Pendekatan 1: Kombinasi Deskripsi dan Genre
+     tfidf = TfidfVectorizer(max_features=5000, stop_words='english')
+     tfidf_matrix = tfidf.fit_transform(df['combined_features'])
+     
+     # Pendekatan 2: Deskripsi Saja
      tfidf_desc = TfidfVectorizer(max_features=5000, stop_words='english')
      tfidf_matrix_desc = tfidf_desc.fit_transform(df['description'])
-     cosine_sim_desc = cosine_similarity(tfidf_matrix_desc, tfidf_matrix_desc)
      ```
-   - **Output**: Top-10 rekomendasi untuk "Squid Game" menggunakan hanya deskripsi, seperti "Free to Play", "King of Peking", dll.
+   - **Alasan**: TF-IDF (Term Frequency-Inverse Document Frequency) mengukur pentingnya kata dalam dokumen relatif terhadap dataset, menghasilkan representasi numerik yang cocok untuk perhitungan kesamaan. Parameter `max_features=5000` membatasi dimensi fitur untuk efisiensi komputasi, sementara `stop_words='english'` menghapus kata-kata umum yang tidak relevan.
+
+**Mengapa Data Preparation Diperlukan?**  
+- Menangani missing values mencegah error selama pemrosesan.  
+- Penggabungan fitur dan preprocessing teks meningkatkan kualitas data.  
+- Ekstraksi fitur dengan TF-IDF mengubah teks menjadi format numerik yang dapat diproses oleh algoritma.
+
+## Modeling and Results
+Sistem rekomendasi dibangun menggunakan **Content-Based Filtering**, yang merekomendasikan konten berdasarkan kesamaan fitur teks (deskripsi dan/atau genre). Algoritma utama yang digunakan adalah **cosine similarity** untuk mengukur kesamaan antar konten. Berikut adalah detailnya:
+
+### Content-Based Filtering
+**Definisi**: Content-Based Filtering merekomendasikan item berdasarkan kesamaan fitur konten (misalnya, deskripsi atau genre) dengan item yang disukai pengguna. Dalam proyek ini, sistem mencocokkan konten berdasarkan teks dari `description` dan/atau `listed_in`.  
+**Cara Kerja**:  
+1. Mengubah teks menjadi vektor numerik menggunakan TF-IDF.  
+2. Menghitung **cosine similarity** antara vektor untuk menentukan seberapa mirip dua konten.  
+3. Mengurutkan skor kesamaan dan mengembalikan top-N konten yang paling mirip.
+
+### Cosine Similarity
+**Definisi**: Cosine similarity mengukur sudut kosinus antara dua vektor dalam ruang berdimensi tinggi, memberikan skor kesamaan antara 0 (tidak mirip) hingga 1 (sangat mirip).  
+**Cara Kerja**:  
+- Vektor TF-IDF dari dua konten dibandingkan untuk menghitung skor kesamaan.  
+- Skor ini digunakan untuk mengurutkan konten dan memilih yang paling mirip.  
+**Keunggulan**: Efisien untuk data teks berdimensi tinggi dan tidak bergantung pada skala fitur.  
+**Kekurangan**: Tidak mempertimbangkan preferensi pengguna (hanya fitur konten).
+
+### Pendekatan 1: Kombinasi Deskripsi dan Genre
+- **Proses**:  
+  - Menggunakan `combined_features` untuk ekstraksi fitur dengan TF-IDF.  
+  - Menghitung cosine similarity untuk semua konten.  
+  - Membuat fungsi rekomendasi yang mengembalikan top-10 konten serupa.  
+    ```python
+    def get_recommendations(title, cosine_sim=cosine_sim, df=df):
+        idx = df[df['title'] == title].index[0]
+        sim_scores = list(enumerate(cosine_sim[idx]))
+        sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
+        sim_scores = sim_scores[1:11]
+        movie_indices = [i[0] for i in sim_scores]
+        return df[['title', 'listed_in', 'description']].iloc[movie_indices]
+    ```
+- **Hasil Top-10 untuk "Squid Game"**:  
+  | Title                           | Listed In                                              | Description                                                                 |
+  |---------------------------------|-------------------------------------------------------|-----------------------------------------------------------------------------|
+  | Free to Play                    | Documentaries                                          | This documentary follows three professional video gamers...                 |
+  | Kakegurui                       | International TV Shows, TV Dramas, TV Thrillers       | Yumeko Jabami enrolls at Hyakkaou Private Academy...                        |
+  | The Circle Brazil               | International TV Shows, Reality TV                     | Be yourself or someone else? In this fun reality competition...             |
+  | Futmalls.com                    | Crime TV Shows, International TV Shows, TV Dramas     | Strange occurrences afflict a group of people...                           |
+  | Medical Police                  | Crime TV Shows, TV Action & Adventure, TV Comedies    | Doctors Owen Maestro and Lola Spratt leave Childrens Hospital...           |
+  | Señora Acero                    | Crime TV Shows, International TV Shows, Spanish-Language TV Shows | When her drug-trafficking husband dies...                                   |
+  | Alice in Borderland             | International TV Shows, TV Action & Adventure, TV Thrillers | An aimless gamer and his two friends find themselves...                    |
+  | Stories by Rabindranath Tagore  | International TV Shows, TV Dramas                     | The writings of Nobel Prize winner Rabindranath Tagore...                  |
+  | Zipi & Zape y la Isla del Capitan | Children & Family Movies, Comedies                   | At Christmas, Zip and Zap take a trip with their parents...                |
+  | High-Rise Invasion              | Anime Series, International TV Shows, TV Thrillers    | High schooler Yuri finds herself atop a skyscraper...                      |
+
+### Pendekatan 2: Deskripsi Saja
+- **Proses**:  
+  - Menggunakan `description` untuk ekstraksi fitur dengan TF-IDF.  
+  - Menghitung cosine similarity dan membuat fungsi rekomendasi serupa.  
+    ```python
+    def get_recommendations_desc(title, cosine_sim=cosine_sim_desc, df=df):
+        idx = df[df['title'] == title].index[0]
+        sim_scores = list(enumerate(cosine_sim[idx]))
+        sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
+        sim_scores = sim_scores[1:11]
+        movie_indices = [i[0] for i in sim_scores]
+        return df[['title', 'listed_in', 'description']].iloc[movie_indices]
+    ```
+- **Hasil Top-10 untuk "Squid Game"**:  
+  | Title                           | Listed In                                              | Description                                                                 |
+  |---------------------------------|-------------------------------------------------------|-----------------------------------------------------------------------------|
+  | Free to Play                    | Documentaries                                          | This documentary follows three professional video gamers...                 |
+  | King of Peking                  | Comedies, Dramas, International Movies                | Strapped for cash, a traveling projectionist begins...                     |
+  | Ink Master                      | Reality TV                                             | Ten of the country's most skilled tattoo artists...                        |
+  | Nailed It! Mexico               | International TV Shows, Reality TV, Spanish-Language TV Shows | The fun, fondant and hilarious cake fails head to Mexico...                |
+  | The Redeemed and the Dominant: Fittest on Earth | Documentaries, Sports Movies                   | Questions about endurance, doping and overall fitness...                   |
+  | Creep                           | Horror Movies, Independent Movies, Thrillers          | When a cash-strapped videographer takes a job...                            |
+  | The Circle Brazil               | International TV Shows, Reality TV                     | Be yourself or someone else? In this fun reality competition...             |
+  | Zipi & Zape y la Isla del Capitan | Children & Family Movies, Comedies                   | At Christmas, Zip and Zap take a trip with their parents...                |
+  | Isi & Ossi                      | Comedies, International Movies, Romantic Movies       | A billionaire's daughter fakes a relationship...                           |
+  | The Half Of It                  | Comedies, Dramas, LGBTQ Movies                        | When smart but cash-strapped teen Ellie Chu agrees...                       |
 
 **Kelebihan dan Kekurangan**:
-- **Pendekatan 1 (Kombinasi Deskripsi dan Genre)**  
-  - **Kelebihan**: Rekomendasi lebih konteksual karena mempertimbangkan genre, yang sering menjadi faktor utama preferensi pengguna.  
-  - **Kekurangan**: Kombinasi fitur dapat memperkenalkan noise jika genre tidak konsisten atau terlalu umum.  
-- **Pendekatan 2 (Deskripsi Saja)**  
-  - **Kelebihan**: Fokus pada narasi cerita, menangkap nuansa tematik yang lebih spesifik.  
-  - **Kekurangan**: Kehilangan informasi genre, yang dapat mengurangi relevansi untuk pengguna yang memprioritaskan kategori tertentu.
+- **Pendekatan 1**:  
+  - **Kelebihan**: Lebih konteksual karena mempertimbangkan genre, relevan untuk preferensi berbasis kategori.  
+  - **Kekurangan**: Noise dari genre yang terlalu umum.  
+- **Pendekatan 2**:  
+  - **Kelebihan**: Menangkap nuansa cerita dari deskripsi.  
+  - **Kekurangan**: Kurang spesifik pada genre, menghasilkan rekomendasi yang lebih beragam tetapi kurang relevan.
 
 ## Evaluation
 
 **Metrik Evaluasi**:  
-Sistem dievaluasi secara **kualitatif** dengan menganalisis relevansi rekomendasi berdasarkan kesamaan genre dan tema. Metrik kuantitatif seperti **Precision@10** digunakan untuk mengukur proporsi rekomendasi yang relevan dari 10 rekomendasi yang dihasilkan.
-
-**Formula Metrik**:
+Evaluasi dilakukan secara **kualitatif** dengan menganalisis relevansi rekomendasi berdasarkan genre dan tema, serta secara **kuantitatif** menggunakan **Precision@10**.  
 - **Precision@10** = (Jumlah rekomendasi relevan dalam Top-10) / 10  
-  - Rekomendasi dianggap relevan jika memiliki genre yang sama atau tema cerita yang serupa dengan konten input (misalnya, drama, thriller, atau petualangan untuk "Squid Game").  
-  - Contoh: Jika 7 dari 10 rekomendasi untuk "Squid Game" memiliki genre "TV Thrillers" atau tema kompetisi, maka Precision@10 = 7/10 = 0.7.
+  - Rekomendasi relevan jika memiliki genre atau tema serupa dengan konten input.
 
 **Hasil Evaluasi**:
 - **Pendekatan 1 (Kombinasi Deskripsi dan Genre)**:  
-  - Untuk "Squid Game" (genre: TV Thrillers, tema: kompetisi bertahan hidup), rekomendasi seperti "Kakegurui" (TV Thrillers) dan "Alice in Borderland" (TV Action & Adventure, Thriller) sangat relevan karena memiliki genre dan tema serupa. Precision@10 diperkirakan ~0.8 (8/10 relevan).  
-  - Untuk "Stranger Things" (genre: TV Sci-Fi & Fantasy, Mysteries), rekomendasi seperti "The OA" dan "Manifest" relevan karena berbagi genre misteri dan sci-fi. Precision@10 ~0.7.  
+  - Untuk "Squid Game" (TV Thrillers, tema kompetisi), rekomendasi seperti "Kakegurui" dan "Alice in Borderland" relevan karena berbagi genre thriller dan tema kompetisi. **Precision@10 ~0.8** (8/10 relevan).  
+  - Untuk "Stranger Things" (TV Sci-Fi & Fantasy, Mysteries), rekomendasi seperti "The OA" relevan. **Precision@10 ~0.7**.  
 - **Pendekatan 2 (Deskripsi Saja)**:  
-  - Rekomendasi untuk "Squid Game" seperti "Free to Play" dan "King of Peking" kurang relevan karena tidak selalu mencerminkan genre thriller atau tema kompetisi, hanya kesamaan kata dalam deskripsi. Precision@10 ~0.5.  
-  - Pendekatan ini cenderung menghasilkan rekomendasi yang lebih beragam tetapi kurang spesifik pada genre.
-
-**Analisis Tambahan**:  
-- Pendekatan 1 lebih unggul karena memanfaatkan genre, yang meningkatkan relevansi untuk preferensi pengguna.  
-- Uji robustitas dilakukan dengan judul tambahan seperti "The Queen's Gambit" (rekomendasi seperti "Searching for Bobby Fischer" relevan karena tema strategi/kompetisi) dan "Breaking Bad" (rekomendasi seperti "Extracurricular" relevan karena tema kriminal).  
-- Visualisasi (bar chart dan word cloud) mendukung pemahaman data, memastikan fitur yang digunakan (deskripsi dan genre) mencerminkan karakteristik konten.
+  - Untuk "Squid Game", rekomendasi seperti "King of Peking" kurang relevan karena tidak mencerminkan genre thriller. **Precision@10 ~0.5**.  
+- **Robustitas**: Diuji dengan "The Queen's Gambit" (rekomendasi seperti "Searching for Bobby Fischer" relevan karena tema strategi) dan "Breaking Bad" (rekomendasi seperti "Extracurricular" relevan karena tema kriminal).
 
 **Kesimpulan**:  
-Sistem rekomendasi dengan pendekatan kombinasi deskripsi dan genre memberikan rekomendasi yang lebih relevan dan konteksual dibandingkan hanya menggunakan deskripsi. Precision@10 menunjukkan performa yang baik untuk judul populer, dan sistem cukup robust untuk menangani berbagai jenis konten (film dan TV show).
+Pendekatan kombinasi deskripsi dan genre lebih unggul karena menghasilkan rekomendasi yang lebih relevan dan konteksual. Sistem ini robust untuk berbagai jenis konten, dengan Precision@10 yang baik untuk judul populer.
